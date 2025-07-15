@@ -72,7 +72,7 @@
             <!-- Actions -->
             <div class="flex items-center gap-4 mt-2">
               <small class="text-gray-500"><%= post.likes.length %> <%= post.likes.length === 1 ? "like" : "likes" %></small>
-              <a class="text-blue-600 hover:underline text-sm font-medium" href="/like/<%= post._id %>">
+              <a class="text-blue-600 hover:text-decoration-none text-sm font-medium" href="/like/<%= post._id %>">
                 <%= post.likes.includes(currentUser._id.toString()) ? "Unlike" : "Like" %>
               </a>
             </div>

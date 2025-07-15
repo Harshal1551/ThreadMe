@@ -81,17 +81,17 @@
             <p class="text-gray-700 text-sm"><%= post.content %></p>
              <% if (post.image) { %>
                <div class="mt-3">
-                  <img src="/images/uploads/<%= post.image %>" alt="Post Image" class="w-full max-w-md rounded-lg shadow-md" />
+                  <img src="/images/uploads/<%= post.image %>" alt="Post Image" class=" max-w-xs rounded-lg shadow-md" />
                </div>
              <% } %>
 
           <small class="text-gray-400 block mt-2"><%= post.likes.length %> likes</small>
           <div class="flex gap-4 text-sm mt-2">
-            <a class="text-blue-600 hover:underline" href="/like/<%= post._id %>">
+            <a class="text-blue-600 hover:text-decoration-none" href="/like/<%= post._id %>">
               <%= post.likes.indexOf(user._id) === -1 ? "Like" : "Unlike" %>
             </a>
-            <a class="text-yellow-600 hover:underline" href="/edit/<%= post._id %>">Edit</a>
-            <a class="text-red-600 hover:underline" href="/delete/<%= post._id %>">Delete</a>
+            <a class="text-yellow-600 hover:text-decoration-none" href="/edit/<%= post._id %>">Edit</a>
+            <a class="text-red-600 hover:text-decoration-none" href="/delete/<%= post._id %>">Delete</a>
           </div>
         </div>
       <% }) %>
