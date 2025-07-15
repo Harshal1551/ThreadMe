@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Post | ThreadMe</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .fade-in-up {
+      animation: fadeInUp 0.9s ease-out both;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .glow {
+      text-shadow: 0 0 8px rgba(59, 130, 246, 0.7);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-sky-100 to-white min-h-screen text-gray-900 px-6 py-10 font-sans">
+
+  <!-- 🔷 Brand -->
+  <div class="text-center mb-12 fade-in-up">
+    <h1 class="text-4xl font-extrabold bg-gradient-to-r from-sky-500 to-blue-600 bg-clip-text text-transparent tracking-widest glow">ThreadMe</h1>
+    <p class="text-gray-500 mt-1">Update your thoughts below</p>
+  </div>
+
+  <!-- 🧾 Edit Form -->
+  <div class="max-w-xl mx-auto bg-white border border-gray-200 rounded-xl p-8 shadow-md fade-in-up">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-semibold text-gray-800">✏️ Edit Your Post</h2>
+      <a href="/logout" class="text-sm bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition shadow-sm">Logout</a>
+    </div>
+
+    <form action="/update/<%= post._id %>" method="post">
+      <textarea
+        name="content"
+        rows="5"
+        placeholder="Update your post..."
+        class="w-full bg-zinc-100 border border-gray-300 rounded-xl p-4 resize-none outline-none text-gray-800 placeholder-gray-400 text-base shadow-sm focus:ring-2 focus:ring-blue-400 transition"
+      ><%= post.content.trim() %></textarea>
+
+      <input
+        type="submit"
+        value="Update Post"
+        class="mt-4 bg-yellow-500 hover:bg-yellow-600 text-black font-medium px-5 py-2 rounded-full text-sm transition shadow-sm"
+      />
+    </form>
+  </div>
+</body>
+</html>

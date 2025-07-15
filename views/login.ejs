@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ThreadMe | Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .fade-in {
+      animation: fadeIn 1.2s ease-in-out both;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .glow {
+      text-shadow: 0 0 8px rgba(59, 130, 246, 0.9);
+    }
+    input:focus {
+      @apply ring-2 ring-blue-500 transition duration-300;
+    }
+  </style>
+</head>
+<body class="relative text-white min-h-screen flex items-center justify-center font-sans px-4">
+
+  <!-- 🌈 Background Grid + Radial Light -->
+  <div class="absolute inset-0 -z-10 h-full w-full bg-white 
+              bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] 
+              bg-[size:6rem_4rem]">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_500px_at_50%_200px,#C9EBFF,transparent)]"></div>
+  </div>
+
+  <!-- 💳 Login Card -->
+  <div class="rounded-3xl p-10 w-full max-w-md shadow-xl fade-in border border-zinc-700 bg-white/10 backdrop-blur-lg">
+
+    <!-- 🧵 Branding -->
+    <h1 class="text-center text-5xl font-extrabold mb-2 bg-gradient-to-r from-sky-400 to-cyan-400 bg-clip-text text-transparent tracking-widest glow">
+      ThreadMe
+    </h1>
+    <p class="text-center text-zinc-800 mb-6">Welcome back! Log in to continue.</p>
+
+    <!-- 📝 Login Form -->
+    <form autocomplete="off" action="/login" method="post" onsubmit="return validateForm()" class="space-y-5">
+
+      <!-- 📧 Email -->
+      <div>
+        <input id="email" name="email" placeholder="Email"
+          class="px-4 py-3 rounded-xl bg-white/5 border-2 text-black border-zinc-600 w-full focus:outline-none"
+          type="email" />
+        <p id="emailError" class="text-red-500 text-sm mt-1 hidden">Email is required</p>
+      </div>
+
+      <!-- 🔒 Password -->
+      <div class="relative">
+        <input id="password" name="password" placeholder="Password"
+          class="px-4 py-3 pr-12 rounded-xl bg-white/5 border-2 text-black border-zinc-600 w-full focus:outline-none"
+          type="password" />
+        <span onclick="togglePassword()"
+          class="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-white text-xl select-none">
+          👁️
+        </span>
+        <p id="passwordError" class="text-red-500 text-sm mt-1 hidden">Password is required</p>
+      </div>
+
+      <!-- ⚠️ Login Error -->
+      <% if (error) { %>
+        <p class="text-red-500 text-sm"><%= error %></p>
+      <% } %>
+
+      <!-- ✅ Submit -->
+      <input
+        class="w-full py-3 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold tracking-wide shadow-lg hover:shadow-xl transition duration-300 cursor-pointer"
+        type="submit" name="submit" value="Login" />
+    </form>
+
+    <!-- 🔁 Register Redirect -->
+    <div class="mt-6 text-center text-gray-800">
+      Don't have an account?
+      <a href="/" class="text-blue-500 hover:underline font-medium">Create one</a>
+    </div>
+  </div>
+
+  <!-- 🔧 Script -->
+  <script>
+    function togglePassword() {
+      const pwd = document.getElementById("password");
+      pwd.type = pwd.type === "password" ? "text" : "password";
+    }
+
+    function validateForm() {
+      let valid = true;
+      ["email", "password"].forEach(id => {
+        const input = document.getElementById(id);
+        const error = document.getElementById(id + "Error");
+        const empty = !input.value.trim();
+        error.classList.toggle("hidden", !empty);
+        if (empty) valid = false;
+      });
+      return valid;
+    }
+  </script>
+</body>
+</html>

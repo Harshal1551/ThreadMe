@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ThreadMe | Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .fade-in-up {
+      animation: fadeInUp 0.9s ease-out both;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .glow {
+      text-shadow: 0 0 8px rgba(96, 165, 250, 0.6);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-sky-100 to-white min-h-screen text-gray-900 px-6 py-10 font-sans">
+
+  <!-- 🔷 Brand -->
+  <div class="text-center mb-10 fade-in-up">
+    <h1 class="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-sky-500 to-blue-600 bg-clip-text text-transparent tracking-widest glow">
+      ThreadMe
+    </h1>
+    <p class="text-gray-500 mt-1">Your personal space to post & connect</p>
+  </div>
+
+  <!-- 🔘 Actions -->
+  <div class="max-w-5xl mx-auto fade-in-up">
+    <div class="flex justify-end gap-4 mb-6">
+      <a href="/feed" class="px-4 py-2 rounded-full bg-blue-600 text-white text-sm hover:bg-blue-700 transition font-medium shadow-sm">🌍 See All Posts</a>
+      <a href="/logout" class="px-4 py-2 rounded-full bg-red-500 text-white text-sm hover:bg-red-600 transition font-medium shadow-sm">Logout</a>
+    </div>
+
+    <!-- 👤 Profile Picture + Name -->
+    <form action="/upload" method="POST" enctype="multipart/form-data" class="flex items-center gap-5 mb-8">
+      <label for="profilepic" class="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-300 shadow cursor-pointer hover:scale-105 transition">
+        <img src="/images/uploads/<%= user.profilepic %>" class="w-full h-full object-cover" />
+      </label>
+      <input type="file" id="profilepic" name="image" class="hidden" accept="image/*" onchange="this.form.submit()">
+      <h3 class="text-2xl sm:text-3xl font-semibold tracking-wide text-gray-800">Welcome, <%= user.name %> 👋</h3>
+    </form>
+
+    <!-- ✍️ Create Post -->
+    <form action="/post" method="POST" enctype="multipart/form-data" onsubmit="return validatePost()" class="mb-12 space-y-3">
+      <textarea
+        id="postContent"
+        name="content"
+        placeholder="What's in your mind?"
+        class="w-full bg-white border border-gray-300 rounded-xl p-4 resize-none outline-none text-gray-800 placeholder:text-gray-400 shadow-sm"
+        rows="4"
+      ></textarea>
+
+      <input
+        type="file"
+        name="postImage"
+        accept="image/*"
+        class="block text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+      />
+
+      <p id="errorText" class="text-red-500 text-sm hidden">Post content cannot be empty</p>
+
+      <input
+        type="submit"
+        value="Create New Post"
+        class="mt-1 px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-500 hover:from-blue-500 hover:to-purple-600 rounded-full text-white text-sm font-semibold shadow-md hover:shadow-lg transition"
+      />
+    </form>
+
+    <!-- 📃 Posts -->
+    <h3 class="text-lg text-gray-700 mb-4 font-semibold">📝 Your Posts</h3>
+    <div class="space-y-4">
+      <% user.posts.reverse().forEach(function(post) { %>
+        <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition hover:scale-[1.01]">
+          <h4 class="text-blue-500 font-medium mb-1">@<%= user.username %></h4>
+            <p class="text-gray-700 text-sm"><%= post.content %></p>
+             <% if (post.image) { %>
+               <div class="mt-3">
+                  <img src="/images/uploads/<%= post.image %>" alt="Post Image" class="w-full max-w-md rounded-lg shadow-md" />
+               </div>
+             <% } %>
+
+          <small class="text-gray-400 block mt-2"><%= post.likes.length %> likes</small>
+          <div class="flex gap-4 text-sm mt-2">
+            <a class="text-blue-600 hover:underline" href="/like/<%= post._id %>">
+              <%= post.likes.indexOf(user._id) === -1 ? "Like" : "Unlike" %>
+            </a>
+            <a class="text-yellow-600 hover:underline" href="/edit/<%= post._id %>">Edit</a>
+            <a class="text-red-600 hover:underline" href="/delete/<%= post._id %>">Delete</a>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- ❌ Delete Account -->
+    <form action="/delete-account" method="post" onsubmit="return confirm('Are you sure you want to delete your account?')">
+      <button class="mt-10 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-full text-white text-sm shadow-sm transition">Delete Account</button>
+    </form>
+  </div>
+
+  <script>
+    function validatePost() {
+      const content = document.getElementById("postContent");
+      const errorText = document.getElementById("errorText");
+      if (!content.value.trim()) {
+        errorText.classList.remove("hidden");
+        return false;
+      }
+      errorText.classList.add("hidden");
+      return true;
+    }
+  </script>
+</body>
+</html>
