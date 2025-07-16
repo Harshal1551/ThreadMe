@@ -1,3 +1,4 @@
+const dotenv = require('dotenv').config(); 
 const express = require('express');
 const app = express();
 const userModel = require("./models/user");
@@ -17,6 +18,8 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(express.static(path.join(__dirname,"public")));
 app.use(cookieParser());
+
+const JWT_SECRET_KEY = process.env.JWT_SECRET || "aaaa"; // Use environment variable or default value
 
 
 app.get("/",(req,res)=>{
@@ -55,7 +58,11 @@ app.get("/login", (req, res) => {
 
 
 app.get("/profile",isLoggedIn, async (req,res)=>{
-    let user = await userModel.findOne({email: req.user.email}).populate("posts");
+    let user = await userModel
+      .findOne({email: req.user.email})
+      .populate("posts")
+      .populate("followers")
+      .populate("following");;
     res.render("profile",{user});
 });
 
@@ -159,7 +166,7 @@ app.post("/register",upload.single("profilepic"), async (req,res)=>{
             profilepic
            });
 
-         let token = jwt.sign({email: email, userid: user._id }, "aaaa");
+         let token = jwt.sign({email: email, userid: user._id },JWT_SECRET_KEY);
          res.cookie("token", token);
          res.redirect("/profile");
      });
@@ -183,7 +190,7 @@ app.post("/login", async (req, res) => {
 
   bcrypt.compare(password, user.password, (err, result) => {
     if (result) {
-      const token = jwt.sign({ email: user.email, userid: user._id }, "aaaa");
+      const token = jwt.sign({ email: user.email, userid: user._id }, JWT_SECRET_KEY);
       res.cookie("token", token);
       return res.redirect("/profile");
     } else {
@@ -212,6 +219,55 @@ app.get("/feed", isLoggedIn, async (req, res) => {
         currentUser
     });
 });
+
+
+app.post("/follow/:id", isLoggedIn, async (req, res) => {
+  const currentUser = await userModel.findById(req.user.userid);
+  const targetUser = await userModel.findById(req.params.id);
+
+  if (!targetUser || currentUser._id.equals(targetUser._id)) {
+    return res.redirect("back");
+  }
+
+  const alreadyFollowing = currentUser.following.includes(targetUser._id);
+
+  if (alreadyFollowing) {
+    currentUser.following.pull(targetUser._id);
+    targetUser.followers.pull(currentUser._id);
+  } else {
+    currentUser.following.push(targetUser._id);
+    targetUser.followers.push(currentUser._id);
+  }
+
+  await currentUser.save();
+  await targetUser.save();
+
+  res.redirect("/feed");
+});
+
+
+app.post("/unfollow/:id", isLoggedIn, async (req, res) => {
+  try {
+    const currentUser = await userModel.findById(req.user.userid);
+    const targetUser = await userModel.findById(req.params.id);
+
+    if (!targetUser) return res.status(404).send("User not found");
+
+    // Remove targetUser from currentUser's following
+    currentUser.following.pull(targetUser._id);
+    await currentUser.save();
+
+    // Remove currentUser from targetUser's followers
+    targetUser.followers.pull(currentUser._id);
+    await targetUser.save();
+
+    res.redirect("/following");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Something went wrong while unfollowing.");
+  }
+});
+
 
 
 app.post("/delete-account", isLoggedIn, async (req, res) => {
@@ -248,12 +304,23 @@ app.post("/delete-account", isLoggedIn, async (req, res) => {
   }
 });
 
+app.get("/followers", isLoggedIn, async (req, res) => {
+  const user = await userModel.findById(req.user.userid).populate("followers");
+  res.render("followers", { followers: user.followers });
+});
+
+app.get("/following", isLoggedIn, async (req, res) => {
+  const user = await userModel.findById(req.user.userid).populate("following");
+  res.render("following", { following: user.following });
+});
+
+
 
 
 function isLoggedIn (req,res,next){
     if(req.cookies.token ==="") res.redirect("/login");
     else{
-       let data = jwt.verify(req.cookies.token, "aaaa");
+       let data = jwt.verify(req.cookies.token, JWT_SECRET_KEY);
        req.user = data;
         next();
     }

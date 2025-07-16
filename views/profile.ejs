@@ -37,14 +37,40 @@
       <a href="/logout" class="px-4 py-2 rounded-full bg-red-500 text-white text-sm hover:bg-red-600 transition font-medium shadow-sm">Logout</a>
     </div>
 
-    <!-- 👤 Profile Picture + Name -->
-    <form action="/upload" method="POST" enctype="multipart/form-data" class="flex items-center gap-5 mb-8">
-      <label for="profilepic" class="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-300 shadow cursor-pointer hover:scale-105 transition">
-        <img src="/images/uploads/<%= user.profilepic %>" class="w-full h-full object-cover" />
-      </label>
-      <input type="file" id="profilepic" name="image" class="hidden" accept="image/*" onchange="this.form.submit()">
-      <h3 class="text-2xl sm:text-3xl font-semibold tracking-wide text-gray-800">Welcome, <%= user.name %> 👋</h3>
+ <form action="/upload" method="POST" enctype="multipart/form-data" class="flex items-center gap-6 mb-8">
+       <!-- Profile Picture -->
+       <label for="profilepic" class="w-20 h-20 rounded-full overflow-hidden border-2 border-blue-300 shadow cursor-pointer hover:scale-105 transition">
+         <img src="/images/uploads/<%= user.profilepic %>" class="w-full h-full object-cover" />
+       </label>
+       <input type="file" id="profilepic" name="image" class="hidden" accept="image/*" onchange="this.form.submit()">
+     
+       <!-- User Info -->
+       <div>
+         <!-- Username -->
+         <h3 class="text-2xl sm:text-3xl font-semibold tracking-wide text-gray-800">Welcome, <%= user.name %> 👋</h3>
+
+          <!-- Stats under username -->
+          <div class="flex gap-8 text-center">
+            <div>
+              <p class="text-md font-bold text-gray-800"><%= user.posts.length %></p>
+              <p class="text-sm text-gray-500">Posts</p>
+            </div>
+            <div>
+              <a href="/followers" class="">
+                <p class="text-md font-bold text-gray-800"><%= user.followers.length %></p>
+                <p class="text-sm text-gray-500">Followers</p>
+              </a>
+            </div>
+            <div>
+              <a href="/following" class="">
+                <p class="text-md font-bold text-gray-800"><%= user.following.length %></p>
+                <p class="text-sm text-gray-500">Following</p>
+              </a>
+            </div>
+          </div>
+       </div>
     </form>
+
 
     <!-- ✍️ Create Post -->
     <form action="/post" method="POST" enctype="multipart/form-data" onsubmit="return validatePost()" class="mb-12 space-y-3">

@@ -53,10 +53,20 @@
           </div>
 
           <!-- 📄 Content -->
-          <div class="flex-1">
-            <!-- Username -->
-            <h2 class="text-blue-500 text-lg font-semibold mb-1">@<%= post.user.username %></h2>
+         <div class="flex-1">
+           <div class="flex items-center justify-between mb-1">
+               <h2 class="text-blue-500 text-lg font-semibold">@<%= post.user.username %></h2>
 
+                 <% if (!post.user._id.equals(currentUser._id)) { %>
+                   <form action="/follow/<%= post.user._id %>" method="POST">
+                     <button class="ml-3 px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition text-sm">
+                      <%= currentUser.following.includes(post.user._id.toString()) ? "Unfollow" : "Follow" %>
+                      </button>
+                     </form>
+                    <% } %>
+            </div>
+
+      
             <!-- Post Text -->
             <p class="text-gray-700 text-base leading-snug mb-2 tracking-tight">
               <%= post.content %>
