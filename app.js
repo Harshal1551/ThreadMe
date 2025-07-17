@@ -104,7 +104,7 @@ app.get("/delete/:id", isLoggedIn, async (req, res) => {
 
     
     if (post.user.toString() === req.user.userid) {
-      // ✅ Delete post image file if it exists
+      // Delete post image file if it exists
        if (post.image) {
          const imagePath = path.join(__dirname, "public", "images", "uploads", post.image);
           if (fs.existsSync(imagePath)) {
@@ -274,7 +274,7 @@ app.post("/delete-account", isLoggedIn, async (req, res) => {
   try {
     const user = await userModel.findOne({ _id: req.user.userid }).populate("posts");
 
-    // ✅ Delete profile picture if it's not default
+    //  Delete profile picture if it's not default
     if (user.profilepic && user.profilepic !== "default.jpeg") {
       const profilePicPath = path.join(__dirname, "public", "images", "uploads", user.profilepic);
       if (fs.existsSync(profilePicPath)) {
@@ -282,7 +282,7 @@ app.post("/delete-account", isLoggedIn, async (req, res) => {
       }
     }
 
-    // ✅ Delete each post image if exists
+    //  Delete each post image if exists
     for (let post of user.posts) {
       if (post.image) {
         const postImgPath = path.join(__dirname, "public", "images", "uploads", post.image);
@@ -312,6 +312,24 @@ app.get("/followers", isLoggedIn, async (req, res) => {
 app.get("/following", isLoggedIn, async (req, res) => {
   const user = await userModel.findById(req.user.userid).populate("following");
   res.render("following", { following: user.following });
+});
+
+app.get("/user/:id", async (req, res) => {
+  try {
+    const user = await userModel.findById(req.params.id);
+    const posts = await postModel.find({ user: req.params.id }).sort({ createdAt: -1 }).populate("user");
+
+    if (!user) return res.status(404).send("User not found");
+
+    res.render("userProfile", {
+      user,
+      posts,
+      currentUser: req.user
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Something went wrong");
+  }
 });
 
 

@@ -14,15 +14,24 @@
   <% } else { %>
     <ul class="space-y-4">
       <% following.forEach(f => { %>
-        <li class="p-4 w-1/2 bg-white rounded shadow flex items-center gap-4">
-          <img src="/images/uploads/<%= f.profilepic %>" class="w-10 h-10 rounded-full object-cover border" />
-          <div>
-            <p class="text-sm font-medium">@<%= f.username %></p>
-            <p class="text-xs text-gray-500"><%= f.email %></p>
-          </div>
-          <form action="/unfollow/<%= f._id %>" method="POST">
-              <button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm">Unfollow</button>
-           </form>
+        <li class="p-0 w-1/2 max-w-xl bg-white rounded shadow overflow-hidden">
+          <div class="flex items-center justify-between p-4 group hover:bg-gray-50 transition">
+             <!-- Entire left section is clickable -->
+             <a href="/user/<%= f._id %>" class="flex items-center gap-4 w-full">
+              <img src="/images/uploads/<%= f.profilepic %>" class="w-10 h-10 rounded-full object-cover border" />
+                <div>
+                   <p class="text-sm font-medium text-blue-600">@<%= f.username %></p>
+                   <p class="text-xs text-gray-500"><%= f.email %></p>
+                 </div>
+               </a>
+
+              <!-- Unfollow button -->
+               <form action="/unfollow/<%= f._id %>" method="POST" class="ml-4">
+                 <button class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm">
+                   Unfollow
+                 </button>
+               </form>
+           </div>
         </li>
       <% }) %>
     </ul>

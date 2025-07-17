@@ -33,25 +33,25 @@
 </head>
 <body class="relative text-white min-h-screen flex items-center justify-center font-sans px-4">
 
-  <!-- 🌈 Background Grid + Radial Light -->
+  <!-- Background Grid + Radial Light -->
   <div class="absolute inset-0 -z-10 h-full w-full bg-white 
               bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] 
               bg-[size:6rem_4rem]">
     <div class="absolute inset-0 bg-[radial-gradient(circle_500px_at_50%_200px,#C9EBFF,transparent)]"></div>
   </div>
 
-  <!-- 💳 Form Card -->
+  <!-- Form Card -->
   <div class="container flex justify-center items-center">
     <div class="rounded-3xl p-10 w-full max-w-3xl shadow-xl fade-in border border-zinc-700 bg-white/10 backdrop-blur-lg">
 
-      <!-- 🧵 Logo -->
+      <!-- Logo -->
       <h1 class="text-center text-5xl font-extrabold mb-2 bg-gradient-to-r from-sky-400 to-cyan-400 bg-clip-text text-transparent tracking-widest glow">ThreadMe</h1>
       <p class="text-center text-black mb-8">Connect. Post. Discover Threads.</p>
 
-      <!-- 📝 Form -->
+      <!-- Form -->
       <form autocomplete="off" action="/register" method="post" enctype="multipart/form-data" onsubmit="return validateForm()" class="space-y-6">
 
-        <!-- 📸 Profile Picture Upload -->
+        <!-- Profile Picture Upload -->
         <div class="flex items-center gap-6">
           <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-zinc-600 shadow-md cursor-pointer transition hover:scale-105 duration-300" onclick="document.getElementById('profilepic').click()">
             <img id="preview" src="/images/uploads/default.jpeg" class="w-full h-full object-cover" />
@@ -63,7 +63,7 @@
           </div>
         </div>
 
-        <!-- 🔤 Name & Username -->
+        <!-- Name & Username -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
             <input id="name" name="name" placeholder="Name"
@@ -77,21 +77,21 @@
           </div>
         </div>
 
-        <!-- 🔢 Age -->
+        <!-- Age -->
         <div>
           <input id="age" name="age" placeholder="Age"
             class="px-4 py-3 rounded-xl bg-white/5 border-2 text-black border-zinc-600 w-full focus:outline-none" type="number">
           <p id="ageError" class="text-red-500 text-sm mt-1 hidden">Age is required</p>
         </div>
 
-        <!-- 📧 Email -->
+        <!-- Email -->
         <div>
           <input id="email" name="email" placeholder="Email"
             class="px-4 py-3 rounded-xl bg-white/5 border-2 text-black  border-zinc-600 w-full focus:outline-none" type="email">
           <p id="emailError" class="text-red-500 text-sm mt-1 hidden">Email is required</p>
         </div>
 
-        <!-- 🔒 Password -->
+        <!-- Password -->
         <div class="relative">
           <input id="password" name="password" placeholder="Password"
             class="px-4 py-3 pr-12 rounded-xl bg-white/5 text-black border-2 border-zinc-600 w-full focus:outline-none" type="password" />
@@ -100,13 +100,13 @@
           <p id="passwordError" class="text-red-500 text-sm mt-1 hidden">Password is required</p>
         </div>
 
-        <!-- ✅ Submit -->
+        <!-- Submit -->
         <input
           class="w-full py-3 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold tracking-wide shadow-lg hover:shadow-xl transition duration-300 cursor-pointer"
           type="submit" value="Create Account">
       </form>
 
-      <!-- 🔁 Login Redirect -->
+      <!-- Login Redirect -->
       <div class="mt-6 text-center text-gray-800">
         Already have an account?
         <a href="/login" class="text-blue-400 hover:text-decoration-none font-medium">Log in</a>
@@ -114,7 +114,7 @@
     </div>
   </div>
 
-  <!-- 🔧 Scripts -->
+  <!-- Scripts -->
   <script>
     function togglePassword() {
       const pwd = document.getElementById("password");

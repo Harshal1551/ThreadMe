@@ -22,7 +22,7 @@
 </head>
 <body class="bg-gradient-to-br from-blue-50 via-sky-100 to-white min-h-screen text-gray-900 px-6 py-10 font-sans">
 
-  <!-- 🔷 Brand -->
+  <!-- Brand -->
   <div class="text-center mb-10 fade-in-up">
     <h1 class="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-sky-500 to-blue-600 bg-clip-text text-transparent tracking-widest glow">
       ThreadMe
@@ -30,7 +30,7 @@
     <p class="text-gray-500 mt-1">Your personal space to post & connect</p>
   </div>
 
-  <!-- 🔘 Actions -->
+  <!-- Actions -->
   <div class="max-w-5xl mx-auto fade-in-up">
     <div class="flex justify-end gap-4 mb-6">
       <a href="/feed" class="px-4 py-2 rounded-full bg-blue-600 text-white text-sm hover:bg-blue-700 transition font-medium shadow-sm">🌍 See All Posts</a>
@@ -72,7 +72,7 @@
     </form>
 
 
-    <!-- ✍️ Create Post -->
+    <!--  Create Post -->
     <form action="/post" method="POST" enctype="multipart/form-data" onsubmit="return validatePost()" class="mb-12 space-y-3">
       <textarea
         id="postContent"
@@ -98,7 +98,7 @@
       />
     </form>
 
-    <!-- 📃 Posts -->
+    <!--  Posts -->
     <h3 class="text-lg text-gray-700 mb-4 font-semibold">📝 Your Posts</h3>
     <div class="space-y-4">
       <% user.posts.reverse().forEach(function(post) { %>
@@ -123,7 +123,7 @@
       <% }) %>
     </div>
 
-    <!-- ❌ Delete Account -->
+    <!--  Delete Account -->
     <form action="/delete-account" method="post" onsubmit="return confirm('Are you sure you want to delete your account?')">
       <button class="mt-10 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-full text-white text-sm shadow-sm transition">Delete Account</button>
     </form>

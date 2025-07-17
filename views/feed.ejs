@@ -22,7 +22,7 @@
 </head>
 <body class="bg-gradient-to-br from-blue-50 via-sky-100 to-white min-h-screen text-gray-900 px-6 py-10 font-sans">
 
-  <!-- 🔷 Brand -->
+  <!-- Brand -->
   <div class="text-center mb-10 fade-in-up">
     <h1 class="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-sky-500 to-blue-600 bg-clip-text text-transparent tracking-widest glow">
       ThreadMe
@@ -30,67 +30,65 @@
     <p class="text-gray-500 mt-1">Explore what others are posting</p>
   </div>
 
-  <!-- 🔙 Navigation -->
+  <!-- Navigation -->
   <div class="max-w-5xl mx-auto fade-in-up">
     <div class="flex justify-between items-center mb-8">
       <h2 class="text-2xl font-semibold text-gray-800">🌍 Public Feed</h2>
       <a href="/profile" class="px-4 py-2 rounded-full bg-red-500 text-white text-sm hover:bg-red-600 shadow-sm transition">Back to Profile</a>
     </div>
 
-    <!-- 📭 No Posts -->
+    <!-- No Posts -->
     <% if(posts.length === 0) { %>
       <p class="text-gray-500">No posts available yet.</p>
     <% } %>
 
-    <!-- 🧾 Posts -->
-    <div class="space-y-6">
-      <% posts.forEach(function(post) { %>
-        <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition hover:scale-[1.01] flex items-start gap-4">
+  
+    <!-- Posts -->
+<% posts.forEach(function(post) { %>
+  <div 
+    onclick="window.location.href='/user/<%= post.user._id %>'" 
+    class="cursor-pointer bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition hover:scale-[1.01] flex items-start gap-4 mb-6"
+  >
+    <!-- Profile Picture -->
+    <div class="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 border-2 border-blue-500 shadow">
+      <img src="/images/uploads/<%= post.user.profilepic %>" alt="dp" class="w-full h-full object-cover" />
+    </div>
 
-          <!-- 👤 Profile Picture -->
-          <div class="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 border-2 border-blue-500 shadow">
-            <img src="/images/uploads/<%= post.user.profilepic %>" alt="dp" class="w-full h-full object-cover" />
-          </div>
+    <!-- Content -->
+    <div class="flex-1">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="text-blue-500 text-lg font-semibold">@<%= post.user.username %></h2>
 
-          <!-- 📄 Content -->
-         <div class="flex-1">
-           <div class="flex items-center justify-between mb-1">
-               <h2 class="text-blue-500 text-lg font-semibold">@<%= post.user.username %></h2>
+        <% if (!post.user._id.equals(currentUser._id)) { %>
+          <form action="/follow/<%= post.user._id %>" method="POST" onclick="event.stopPropagation();">
+            <button class="ml-3 px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition text-sm">
+              <%= currentUser.following.includes(post.user._id.toString()) ? "Unfollow" : "Follow" %>
+            </button>
+          </form>
+        <% } %>
+      </div>
 
-                 <% if (!post.user._id.equals(currentUser._id)) { %>
-                   <form action="/follow/<%= post.user._id %>" method="POST">
-                     <button class="ml-3 px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition text-sm">
-                      <%= currentUser.following.includes(post.user._id.toString()) ? "Unfollow" : "Follow" %>
-                      </button>
-                     </form>
-                    <% } %>
-            </div>
+      <p class="text-gray-700 text-base leading-snug mb-2 tracking-tight">
+        <%= post.content %>
+      </p>
 
-      
-            <!-- Post Text -->
-            <p class="text-gray-700 text-base leading-snug mb-2 tracking-tight">
-              <%= post.content %>
-            </p>
-
-            <% if (post.image) { %>
-              <div class="mt-3">
-                 <img src="/images/uploads/<%= post.image %>" alt="Post Image" class="w-full max-w-md rounded-lg shadow-md" />
-              </div>
-            <% } %>
-
-
-            <!-- Actions -->
-            <div class="flex items-center gap-4 mt-2">
-              <small class="text-gray-500"><%= post.likes.length %> <%= post.likes.length === 1 ? "like" : "likes" %></small>
-              <a class="text-blue-600 hover:text-decoration-none text-sm font-medium" href="/like/<%= post._id %>">
-                <%= post.likes.includes(currentUser._id.toString()) ? "Unlike" : "Like" %>
-              </a>
-            </div>
-          </div>
+      <% if (post.image) { %>
+        <div class="mt-3">
+          <img src="/images/uploads/<%= post.image %>" alt="Post Image" class="w-full max-w-md rounded-lg shadow-md" />
         </div>
-      <% }) %>
+      <% } %>
+
+      <div class="mt-2 flex items-center gap-4 text-sm text-gray-600" onclick="event.stopPropagation();">
+        <span><%= post.likes.length %> <%= post.likes.length === 1 ? "like" : "likes" %></span>
+        <a href="/like/<%= post._id %>" class="text-blue-600 hover:underline font-medium">
+          <%= post.likes.includes(currentUser._id.toString()) ? "Unlike" : "Like" %>
+        </a>
+      </div>
+
     </div>
   </div>
+<% }); %>
 
+</div>
 </body>
 </html>
