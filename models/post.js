@@ -17,7 +17,9 @@ const postSchema = mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "user"
         }
-    ]
+    ],
+    comments: [{ text: String, user: { type: mongoose.Schema.Types.ObjectId, ref: 'user' } }]
+
 });
 
 module.exports = mongoose.model('post',postSchema);

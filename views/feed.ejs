@@ -19,6 +19,12 @@
       text-shadow: 0 0 8px rgba(96, 165, 250, 0.6);
     }
   </style>
+
+  <link
+     rel="stylesheet"
+     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
 </head>
 <body class="bg-gradient-to-br from-blue-50 via-sky-100 to-white min-h-screen text-gray-900 px-6 py-10 font-sans">
 
@@ -78,17 +84,129 @@
         </div>
       <% } %>
 
-      <div class="mt-2 flex items-center gap-4 text-sm text-gray-600" onclick="event.stopPropagation();">
-        <span><%= post.likes.length %> <%= post.likes.length === 1 ? "like" : "likes" %></span>
-        <a href="/like/<%= post._id %>" class="text-blue-600 hover:underline font-medium">
-          <%= post.likes.includes(currentUser._id.toString()) ? "Unlike" : "Like" %>
-        </a>
-      </div>
+         <div class="mt-3 flex items-center gap-5 text-gray-600 text-sm">
+              <!-- Like Icon -->
+              <form action="/like/<%= post._id %>" method="GET" onclick="event.stopPropagation();">
+             <button type="submit" class="flex items-center gap-2 group">
+               <i class="<%= post.likes.includes(currentUser._id.toString()) ? 'fas' : 'far' %> fa-heart 
+                          <%= post.likes.includes(currentUser._id.toString()) ? 'text-red-500' : 'text-gray-600 group-hover:text-red-400' %>"></i>
+               <span class="text-sm"><%= post.likes.length %></span>
+             </button>
+             </form>
+
+              <!-- Comment Icon -->
+             <button
+              class="flex items-center gap-2 hover:text-blue-500 transition"
+              onclick="openModal('<%= post._id %>'); event.stopPropagation();">
+              <i class="far fa-comment"></i>
+              <span class="text-sm"><%= post.comments.length %></span>
+             </button>
+      
+          </div>
 
     </div>
   </div>
 <% }); %>
 
 </div>
+
+
+<!-- Comment Modal -->
+<div id="commentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white w-full max-w-lg rounded-lg shadow-lg p-6 relative max-h-[90vh] overflow-y-auto">
+    <button onclick="closeModal()" class="absolute top-3 right-4 text-gray-500 hover:text-black text-lg">&times;</button>
+    
+    <div id="modalContent">
+      <!-- Fetched via JS -->
+      <p class="text-center text-gray-500">Loading...</p>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script>
+  function openModal(postId) {
+    const modal = document.getElementById("commentModal");
+    const content = document.getElementById("modalContent");
+    modal.classList.remove("hidden");
+
+fetch(`/post/${postId}/comments/json`)
+  .then(res => res.json())
+  .then(data => {
+   content.innerHTML = `
+  <!-- Comments List -->
+  <div class="space-y-2 mb-4" id="commentList">
+    ${data.comments.map(comment => `
+      <div class="border p-2 rounded">
+        <p class="text-sm text-gray-800">@${comment.username}</p>
+        <p class="text-gray-600 text-sm">${comment.text}</p>
+      </div>
+    `).join('')}
+  </div>
+
+  <!-- Comment Form -->
+  <form id="commentForm" class="mt-4 flex gap-2">
+    <input type="text" name="commentText" placeholder="Add a comment..." required
+      class="flex-1 border px-3 py-2 rounded text-sm focus:outline-none focus:ring focus:border-blue-400" />
+    <button type="submit" class="bg-blue-500 text-white px-4 rounded text-sm">Post</button>
+  </form>
+`;
+  const commentList = content.querySelector(".space-y-2");
+
+
+    // Attach AJAX submission listener
+    const form = document.getElementById("commentForm");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const commentText = form.commentText.value.trim();
+
+      if (!commentText) return;
+
+      try {
+        const response = await fetch(`/comment/${postId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ commentText })
+        });
+
+        if (response.ok) {
+          const newComment = await response.json();
+
+          //  Add the new comment dynamically
+          const commentList = content.querySelector(".space-y-2");
+          const commentHtml = `
+            <div class="border p-2 rounded">
+              <p class="text-sm text-gray-800">@${newComment.username}</p>
+              <p class="text-gray-600 text-sm">${newComment.text}</p>
+            </div>
+          `;
+          commentList.innerHTML += commentHtml;
+
+          // Clear input
+          form.reset();
+          window.location.href = "/feed";
+
+        } else {
+          alert("Failed to post comment.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error submitting comment.");
+      }
+    });
+  })
+   .catch(err => {
+        content.innerHTML = `<p class="text-red-500">Failed to load comments.</p>`;
+      });
+  }
+
+  function closeModal() {
+    document.getElementById("commentModal").classList.add("hidden");
+  }
+</script>
+
+
 </body>
 </html>

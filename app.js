@@ -333,16 +333,79 @@ app.get("/user/:id", async (req, res) => {
 });
 
 
+app.get("/post/:id/comments/json", isLoggedIn, async (req, res) => {
+  try {
+    const post = await postModel.findById(req.params.id)
+      .populate("user")
+      .populate("comments.user", "username"); // Corrected
+
+    if (!post) return res.status(404).json({ error: "Post not found" });
+
+    // Format comments with username (safe fallback)
+    const formattedComments = post.comments.map(comment => ({
+      text: comment.text,
+      username: comment.user?.username || "Unknown"
+    }));
+
+    res.json({
+      _id: post._id,
+      user: post.user,
+      content: post.content,
+      image: post.image,
+      comments: formattedComments
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 
-function isLoggedIn (req,res,next){
-    if(req.cookies.token ==="") res.redirect("/login");
-    else{
-       let data = jwt.verify(req.cookies.token, JWT_SECRET_KEY);
-       req.user = data;
-        next();
-    }
-   
+app.post('/comment/:postId', isLoggedIn, async (req, res) => {
+  try {
+    const { commentText } = req.body;
+    const userId = req.user.userid;
+    const postId = req.params.postId;
+    const Username = req.body.username;
+
+    if (!commentText) return res.status(400).send("No comment");
+
+    const post = await postModel.findById(postId);
+    if (!post) return res.status(404).send("Post not found");
+
+    post.comments.push({ text: commentText, user: userId });
+    await post.save();
+
+    const user = await userModel.findById(userId);
+      res.status(200).json({
+        username: user.username,
+        text: commentText
+      });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
+
+
+function isLoggedIn(req, res, next) {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.redirect("/login");
+  }
+  
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET_KEY);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    console.error("JWT verification failed:", err.message);
+    res.clearCookie("token");
+    return res.redirect("/login");
+  }
 }
 
 app.listen(3000);
